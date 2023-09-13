@@ -8,16 +8,32 @@ import android.app.Activity;
 
 import java.util.Map;
 
+import io.flutter.plugin.platform.PlatformPlugin;
+
 /**
  * A container which contains the FlutterView
  */
 public interface FlutterViewContainer {
+    PlatformPlugin getPlatformPlugin();
+
     Activity getContextActivity();
+
     String getUrl();
+
     Map<String, Object> getUrlParams();
+
     String getUniqueId();
+
     void finishContainer(Map<String, Object> result);
-    default boolean isPausing() { return false; }
-    default boolean isOpaque() { return true; }
-    default void detachFromEngineIfNeeded() {}
+
+    default boolean isPausing() {
+        return false;
+    }
+
+    default boolean isOpaque() {
+        return true;
+    }
+
+    default void detachFromEngineIfNeeded() {
+    }
 }

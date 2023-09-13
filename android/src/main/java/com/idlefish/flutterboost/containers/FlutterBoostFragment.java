@@ -35,12 +35,13 @@ import io.flutter.embedding.android.FlutterView;
 import io.flutter.embedding.android.RenderMode;
 import io.flutter.embedding.android.TransparencyMode;
 import io.flutter.embedding.engine.FlutterEngine;
+import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugin.platform.PlatformPlugin;
 
 public class FlutterBoostFragment extends FlutterFragment implements FlutterViewContainer {
     private static final String TAG = "FlutterBoost_java";
     private final String who = UUID.randomUUID().toString();
-    private final FlutterTextureHooker textureHooker=new FlutterTextureHooker();
+    private final FlutterTextureHooker textureHooker = new FlutterTextureHooker();
     private FlutterView flutterView;
     private PlatformPlugin platformPlugin;
     private LifecycleStage stage;
@@ -49,6 +50,11 @@ public class FlutterBoostFragment extends FlutterFragment implements FlutterView
 
     private boolean isDebugLoggingEnabled() {
         return FlutterBoostUtils.isDebugLoggingEnabled();
+    }
+
+    @Override
+    public PlatformPlugin getPlatformPlugin() {
+        return platformPlugin;
     }
 
     @Override
@@ -115,26 +121,29 @@ public class FlutterBoostFragment extends FlutterFragment implements FlutterView
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-        if (isDebugLoggingEnabled()) Log.d(TAG, "#onHiddenChanged: hidden="  + hidden + ", " + this);
+        if (isDebugLoggingEnabled()) Log.d(TAG, "#onHiddenChanged: hidden=" + hidden + ", " + this);
         // If |onHiddenChanged| method is called before the |onCreateView|,
         // we just return here.
         if (flutterView == null) return;
         if (hidden) {
             didFragmentHide();
         } else {
-            didFragmentShow(() -> {});
+            didFragmentShow(() -> {
+            });
         }
     }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if (isDebugLoggingEnabled()) Log.d(TAG, "#setUserVisibleHint: isVisibleToUser="  + isVisibleToUser + ", " + this);
+        if (isDebugLoggingEnabled())
+            Log.d(TAG, "#setUserVisibleHint: isVisibleToUser=" + isVisibleToUser + ", " + this);
         // If |setUserVisibleHint| method is called before the |onCreateView|,
         // we just return here.
         if (flutterView == null) return;
         if (isVisibleToUser) {
-            didFragmentShow(() -> {});
+            didFragmentShow(() -> {
+            });
         } else {
             didFragmentHide();
         }
@@ -180,7 +189,8 @@ public class FlutterBoostFragment extends FlutterFragment implements FlutterView
     @Override
     public void onPause() {
         super.onPause();
-        if (isDebugLoggingEnabled()) Log.d(TAG, "#onPause: " + this + ", isFinshing=" + isFinishing);
+        if (isDebugLoggingEnabled())
+            Log.d(TAG, "#onPause: " + this + ", isFinshing=" + isFinishing);
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
             FlutterViewContainer top = FlutterContainerManager.instance().getTopActivityContainer();
             if (top != null && top != this.getContextActivity() && !top.isOpaque() && top.isPausing()) {
@@ -205,7 +215,6 @@ public class FlutterBoostFragment extends FlutterFragment implements FlutterView
     public void onDestroyView() {
         if (isDebugLoggingEnabled()) Log.d(TAG, "#onDestroyView: " + this);
         FlutterBoost.instance().getPlugin().onContainerDestroyed(this);
-
         super.onDestroyView();
     }
 
@@ -232,7 +241,8 @@ public class FlutterBoostFragment extends FlutterFragment implements FlutterView
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (isDebugLoggingEnabled()) Log.d(TAG, "#onConfigurationChanged: " + (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE ? "LANDSCAPE" : "PORTRAIT") + ", " +  this);
+        if (isDebugLoggingEnabled())
+            Log.d(TAG, "#onConfigurationChanged: " + (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE ? "LANDSCAPE" : "PORTRAIT") + ", " + this);
     }
 
     @Override
@@ -243,11 +253,11 @@ public class FlutterBoostFragment extends FlutterFragment implements FlutterView
 
     @Override
     public boolean shouldRestoreAndSaveState() {
-      if (getArguments().containsKey(ARG_ENABLE_STATE_RESTORATION)) {
-        return getArguments().getBoolean(ARG_ENABLE_STATE_RESTORATION);
-      }
-      // Defaults to |true|.
-      return true;
+        if (getArguments().containsKey(ARG_ENABLE_STATE_RESTORATION)) {
+            return getArguments().getBoolean(ARG_ENABLE_STATE_RESTORATION);
+        }
+        // Defaults to |true|.
+        return true;
     }
 
     @Override
@@ -301,7 +311,7 @@ public class FlutterBoostFragment extends FlutterFragment implements FlutterView
 
     @Override
     public Map<String, Object> getUrlParams() {
-        return (HashMap<String, Object>)getArguments().getSerializable(EXTRA_URL_PARAM);
+        return (HashMap<String, Object>) getArguments().getSerializable(EXTRA_URL_PARAM);
     }
 
     @Override
@@ -320,7 +330,8 @@ public class FlutterBoostFragment extends FlutterFragment implements FlutterView
     }
 
     protected void didFragmentShow(Runnable onComplete) {
-        if (isDebugLoggingEnabled()) Log.d(TAG, "#didFragmentShow: " + this + ", isOpaque=" + isOpaque());
+        if (isDebugLoggingEnabled())
+            Log.d(TAG, "#didFragmentShow: " + this + ", isOpaque=" + isOpaque());
 
         // try to detach *prevous* container from the engine.
         FlutterViewContainer top = FlutterContainerManager.instance().getTopContainer();
@@ -335,7 +346,8 @@ public class FlutterBoostFragment extends FlutterFragment implements FlutterView
     }
 
     protected void didFragmentHide() {
-        if (isDebugLoggingEnabled()) Log.d(TAG, "#didFragmentHide: " + this + ", isOpaque=" + isOpaque());
+        if (isDebugLoggingEnabled())
+            Log.d(TAG, "#didFragmentHide: " + this + ", isOpaque=" + isOpaque());
         FlutterBoost.instance().getPlugin().onContainerDisappeared(this);
         // We defer |performDetach| call to new Flutter container's |onResume|;
         // performDetach();
@@ -349,6 +361,10 @@ public class FlutterBoostFragment extends FlutterFragment implements FlutterView
 
         if (platformPlugin == null) {
             platformPlugin = new PlatformPlugin(getActivity(), getFlutterEngine().getPlatformChannel());
+            final PlatformChannel.SystemChromeStyle lastTheme = FlutterBoost.instance().getLastTheme();
+            if (lastTheme != null) {
+                FlutterBoostUtils.setCurrentSystemUiOverlayTheme(platformPlugin, lastTheme);
+            }
         }
 
         // Attach rendering pipeline.
@@ -371,6 +387,8 @@ public class FlutterBoostFragment extends FlutterFragment implements FlutterView
     private void releasePlatformChannel() {
         if (isDebugLoggingEnabled()) Log.d(TAG, "#releasePlatformChannel: " + this);
         if (platformPlugin != null) {
+            final PlatformChannel.SystemChromeStyle currentTheme = FlutterBoostUtils.getCurrentSystemUiOverlayTheme(platformPlugin);
+            FlutterBoost.instance().setLastTheme(currentTheme);
             platformPlugin.destroy();
             platformPlugin = null;
         }
@@ -397,8 +415,8 @@ public class FlutterBoostFragment extends FlutterFragment implements FlutterView
     @Override
     public TransparencyMode getTransparencyMode() {
         String transparencyModeName =
-            getArguments()
-                .getString(ARG_FLUTTERVIEW_TRANSPARENCY_MODE, TransparencyMode.opaque.name());
+                getArguments()
+                        .getString(ARG_FLUTTERVIEW_TRANSPARENCY_MODE, TransparencyMode.opaque.name());
         return TransparencyMode.valueOf(transparencyModeName);
     }
 
@@ -431,7 +449,7 @@ public class FlutterBoostFragment extends FlutterFragment implements FlutterView
         }
 
         public CachedEngineFragmentBuilder urlParams(Map<String, Object> params) {
-            this.params = (params instanceof HashMap) ? (HashMap)params : new HashMap<String, Object>(params);
+            this.params = (params instanceof HashMap) ? (HashMap) params : new HashMap<String, Object>(params);
             return this;
         }
 
@@ -446,13 +464,13 @@ public class FlutterBoostFragment extends FlutterFragment implements FlutterView
             return this;
         }
 
-        public CachedEngineFragmentBuilder renderMode( RenderMode renderMode) {
+        public CachedEngineFragmentBuilder renderMode(RenderMode renderMode) {
             this.renderMode = renderMode;
             return this;
         }
 
         public CachedEngineFragmentBuilder transparencyMode(
-                 TransparencyMode transparencyMode) {
+                TransparencyMode transparencyMode) {
             this.transparencyMode = transparencyMode;
             return this;
         }

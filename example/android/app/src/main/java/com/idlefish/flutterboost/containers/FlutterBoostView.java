@@ -19,6 +19,7 @@ import io.flutter.embedding.android.LifecycleView;
 import io.flutter.embedding.android.RenderMode;
 import io.flutter.embedding.android.TransparencyMode;
 import io.flutter.embedding.engine.renderer.FlutterUiDisplayListener;
+import io.flutter.plugin.platform.PlatformPlugin;
 
 import static com.idlefish.flutterboost.containers.FlutterActivityLaunchConfigs.EXTRA_UNIQUE_ID;
 import static com.idlefish.flutterboost.containers.FlutterActivityLaunchConfigs.EXTRA_URL;
@@ -36,6 +37,11 @@ public class FlutterBoostView extends LifecycleView implements FlutterViewContai
             Log.w(TAG, "Application attempted to call on a destroyed View", new Throwable());
         }
         return hasDestroyed;
+    }
+
+    @Override
+    public PlatformPlugin getPlatformPlugin() {
+        return null;
     }
 
     @NonNull

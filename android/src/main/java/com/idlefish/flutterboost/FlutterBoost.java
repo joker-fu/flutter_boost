@@ -19,6 +19,7 @@ import io.flutter.embedding.android.FlutterEngineProvider;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.FlutterEngineCache;
 import io.flutter.embedding.engine.dart.DartExecutor;
+import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.view.FlutterMain;
 
 public class FlutterBoost {
@@ -28,6 +29,7 @@ public class FlutterBoost {
     private FlutterBoostPlugin plugin;
     private boolean isBackForegroundEventOverridden = false;
     private boolean isAppInBackground = false;
+    private PlatformChannel.SystemChromeStyle lastTheme;
 
 
     private FlutterBoost() {
@@ -271,6 +273,15 @@ public class FlutterBoost {
 
     private void setupActivityLifecycleCallback(Application application, boolean isBackForegroundEventOverridden) {
         application.registerActivityLifecycleCallbacks(new BoostActivityLifecycle(isBackForegroundEventOverridden));
+    }
+
+
+    public PlatformChannel.SystemChromeStyle getLastTheme() {
+        return lastTheme;
+    }
+
+    public void setLastTheme(PlatformChannel.SystemChromeStyle lastTheme) {
+        this.lastTheme = lastTheme;
     }
 
     private class BoostActivityLifecycle implements Application.ActivityLifecycleCallbacks {
