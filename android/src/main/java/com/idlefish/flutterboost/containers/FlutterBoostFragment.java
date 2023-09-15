@@ -46,7 +46,7 @@ public class FlutterBoostFragment extends FlutterFragment implements FlutterView
     private PlatformPlugin platformPlugin;
     private LifecycleStage stage;
     private boolean isAttached = false;
-    private boolean isFinishing = false;
+    protected boolean isFinishing = false;
 
     private boolean isDebugLoggingEnabled() {
         return FlutterBoostUtils.isDebugLoggingEnabled();
@@ -292,11 +292,6 @@ public class FlutterBoostFragment extends FlutterFragment implements FlutterView
             intent.putExtra(ACTIVITY_RESULT_KEY, new HashMap<String, Object>(result));
             getActivity().setResult(Activity.RESULT_OK, intent);
         }
-        onFinishContainer();
-    }
-
-    // finish activity container
-    protected void onFinishContainer() {
         getActivity().finish();
     }
 
